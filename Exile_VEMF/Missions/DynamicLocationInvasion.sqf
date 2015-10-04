@@ -102,10 +102,10 @@ if (VEMF_invasCount < _maxInvasions) then
 							// Deal with the 50s
 							if not isNil"_cal50s" then
 							{
-								_del50s = [["DynamicLocationInvasion"],["keep50s"]] call VEMF_fnc_getSetting;
-								if (_del50s isEqualTo 1) then
+								_keep50s = ([["DynamicLocationInvasion"],["keep50s"]] call VEMF_fnc_getSetting) select 0;
+								if (_keep50s isEqualTo -1) then
 								{
-									_cal50delMode = [["DynamicLocationInvasion"],["cal50delMode"]] call VEMF_fnc_getSetting;
+									_cal50delMode = ([["DynamicLocationInvasion"],["cal50delMode"]] call VEMF_fnc_getSetting) select 0;
 									{
 										if (_cal50delMode isEqualTo 1) then
 										{

@@ -1,5 +1,11 @@
 ## VEMF Changelog
 
+#### `v1.0725.6`
+**[NEW]** Option to control deletion of .50 cals when mission done <br />
+**[IMPROVED]** Respect reward system <br />
+**[FIXED]** Players getting respect if AI kill other AI <br />
+<br />
+
 #### `v1.0724.1`
 **[NEW]** Option to control distance between each mission <br />
 **[CHANGED]** Server-side folder is now called Exile_VEMF <br />

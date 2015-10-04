@@ -55,28 +55,102 @@ if not(alive _target) then
 	};
 
 	_killer = [_this, 1, objNull, [objNull]] call BIS_fnc_param;
-	if not isNull _killer then
+	if isPlayer _killer then
 	{
 		if (vehicle _killer isEqualTo _killer) then // No roadkills please
 		{
-			_giveRespectah = "giveKillerRespect" call VEMF_fnc_getSetting;
-			if (_giveRespectah isEqualto 1) then
+			_respectReward = "respectReward" call VEMF_fnc_getSetting;
+			if (_respectReward > 1) then
 			{
-				_respectToGive = "baseRespectGive" call VEMF_fnc_getSetting;
-				if (_respectToGive > 0) then
+				_message = [[]];
+				_killMsg = ["AI WACKED","AI CLIPPED","AI DISABLED","AI DISQUALIFIED","AI WIPED","AI WIPED","AI ERASED","AI LYNCHED","AI WRECKED","AI NEUTRALIZED","AI SNUFFED","AI WASTED","AI ZAPPED"] call VEMF_fnc_random;
+				(_message select 0) pushBack [_killMsg,_respectReward];
+				_dist = _target distance _killer;
+				switch true do
 				{
-					_killMsg = ["AI WACKED","AI CLIPPED","AI DISABLED","AI DISQUALIFIED","AI WIPED","AI WIPED","AI ERASED","AI LYNCHED","AI WRECKED","AI NEUTRALIZED","AI SNUFFED","AI WASTED","AI ZAPPED"] call VEMF_fnc_random;
-					_dist = _target distance _killer;
-					_bonus = round (_dist / 3);
-					[_killer, "showFragRequest", [[[_killMsg, _respectToGive + _bonus]]]] call ExileServer_system_network_send_to;
-					_curRespect = _killer getVariable ["ExileScore", 0];
-					_newRespect = _curRespect + _respectToGive + _bonus;
-					_killer setVariable ["ExileScore", _newRespect];
-					ExileClientPlayerScore = _newRespect;
-					(owner _killer) publicVariableClient "ExileClientPlayerScore";
-					ExileClientPlayerScore = nil;
-					format["setAccountMoneyAndRespect:%1:%2:%3", _killer getVariable ["ExileMoney", 0], _newRespect, (getPlayerUID _killer)] call ExileServer_system_database_query_fireAndForget;
+					case (_dist < 11):
+					{
+						if (_dist > 6) then
+						{
+							(_message select 0) pushBack ["close call",15]
+						};
+						if (_dist < 6) then
+						{
+							(_message select 0) pushBack ["CQB Master",25]
+						};
+					};
+					case (_dist < 100):
+					{
+						if (_dist > 50) then
+						{
+							(_message select 0) pushBack ["+50m",10]
+						};
+						if (_dist < 50) then
+						{
+							(_message select 0) pushBack ["below 50m",15]
+						};
+					};
+					case (_dist < 200):
+					{
+						if (_dist > 100) then
+						{
+							(_message select 0) pushBack ["above 100m",20]
+						};
+						if (_dist < 100) then
+						{
+							(_message select 0) pushBack ["below 100m",25]
+						};
+					};
+					case (_dist < 500):
+					{
+						if (_dist > 250) then
+						{
+							(_message select 0) pushBack ["above 250m",35]
+						};
+						if (_dist < 250) then
+						{
+							(_message select 0) pushBack ["under 250m",30]
+						};
+					};
+					case (_dist < 1000):
+					{
+						if (_dist > 500) then
+						{
+							(_message select 0) pushBack ["above 500m",50]
+						};
+						if (_dist < 500) then
+						{
+							(_message select 0) pushBack ["below 500m",40]
+						};
+					};
+					case (_dist < 2000):
+					{
+						if (_dist > 1000) then
+						{
+							(_message select 0) pushBack ["sick range",100]
+						};
+						if (_dist < 1000) then
+						{
+							(_message select 0) pushBack ["range skill",85]
+						};
+					};
+					case (_dist > 2000):
+					{
+						(_message select 0) pushBack [format["hax? %1m!!!", round _dist],250]
+					};
 				};
+				[_killer, "showFragRequest", _message] call ExileServer_system_network_send_to;
+				_curRespect = _killer getVariable ["ExileScore", 0];
+				_respectToGive = 0;
+				{
+					_respectToGive = _respectToGive + (_x select 1)
+				} forEach (_message select 0);
+				_newRespect = _curRespect + _respectToGive;
+				_killer setVariable ["ExileScore", _newRespect];
+				ExileClientPlayerScore = _newRespect;
+				(owner _killer) publicVariableClient "ExileClientPlayerScore";
+				ExileClientPlayerScore = nil;
+				format["setAccountMoneyAndRespect:%1:%2:%3", _killer getVariable ["ExileMoney", 0], _newRespect, (getPlayerUID _killer)] call ExileServer_system_database_query_fireAndForget;
 			};
 
 			if (("sayKilled" call VEMF_fnc_getSetting) isEqualTo 1) then // Send kill message if enabled

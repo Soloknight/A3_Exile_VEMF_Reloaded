@@ -15,7 +15,7 @@
 class VEMFconfig
 {
 	/////////////////////////////
-	VEMF_version = 1.0724.3; /// Do NOT change
+	VEMF_version = 1.0725.6; /// Do NOT change
 	/////////////////////////////
 	/////// Configure VEMF here ///////
 	// Global settings
@@ -38,8 +38,7 @@ class VEMFconfig
 	keepLaunchers = 1; // Use -1 to remove AI's launcher on killed
 	keepAIbodies = 1; // Set to -1 if you want the AI's body to be deleted after they are killed
 	aiPoliceMode = 1; // Use -1 to give AI normal soldier clothing
-	giveKillerRespect = 1; // Use -1 to not give the killer of AI respect
-		baseRespectGive = 15; // Minimum respect gain. VEMF dynamically rewards higher for distance
+	respectReward = 20; // Default respect to give always | Use -1 to disable respect gain. Minimum: 1 (if you want it enabled) | VEMF will automatically give bonus
 
 	/////// Debugging/learning mode ///////
 	enableDebug = 0; // -1 to disable, 0 = ERRORS only | 1 = INFO only | 2 = ERRORS & INFO
