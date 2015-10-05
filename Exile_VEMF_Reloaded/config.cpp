@@ -26,8 +26,12 @@ class CfgVemfReloaded
 	missionList[] = {"DynamicLocationInvasion"}; // Speaks for itself, right?
 	missionDistance = 3000; // Minimum distance between missions
 	addons[] = {}; // Not used for now
-	noMissionPos[] = {{{2998.62,18175.4,0.00143886},500},{{14601.3,16799.3,0.00143814},800},{{23334.8,24189.5,0.00132132},600}}; // Format: {{position},radius} | Default: Exile safezones
+		//Altis
+	noMissionPos[] = {{{14600,16797.199,0.101437},1000},{{23334.6,24188.9,0.00143886},1000},{{2998.06,18175.5,0.00175285},1000},{{9192.48,21519.3,0.00144768},1000},{{26833.49,24850.111,0.00144768},1000},{{20937.424,7369.8242,0.00144768},1000},{{5949.45,12518.7,0.00144768},1000},{{11557,7047.75,0.00144768},1000},{{8809.4,25032.1,0.00144768},1000},{{23157.5,18726.7,0.00144768},1000}}; // Format: {{position},radius} | Default: Exile safezones
 	locationBlackList[] = {"Sagonisi","Monisi","Fournos","Savri","Atsalis","Polemista","Cap Makrinos","Pyrgi","Makrynisi","Chelonisi","Almyra","Surf Club"};
+		//Esseker
+	//noMissionPos[] = {{{14600,16797.199,0.101437},1000},{{3982.6892,9277.5684,150.25922},1000},{{973.6892,2774.5684,0},1000}}; // Format: {{position},radius} | Default: Exile safezones
+	//locationBlackList[] = {"ES Petrol"};
 	killPercentage = 100; // In percent. 100 means all AI that belong to mission need to be killed
 	sayKilled = 1; // Set to -1 if you do not want AI killed messages | 1 = everyone will see message | 2 = send message only to the killer
 	allowSmall = 1; // Set to -1 if you do not want missions to target very small unusual locations
