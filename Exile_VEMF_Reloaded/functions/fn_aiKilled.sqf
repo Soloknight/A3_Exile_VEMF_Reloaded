@@ -16,7 +16,7 @@ _target = [_this, 0, objNull, [objNull]] call BIS_fnc_param;
 if not(alive _target) then
 {
 	_target removeAllEventHandlers "MPKilled";
-	_settings = [["keepLaunchers","keepAIbodies"]] call VEMF_fnc_getSetting;
+	_settings = [["keepLaunchers","keepAIbodies"]] call VEMFr_fnc_getSetting;
 	_keepLaunchers = _settings select 0;
 	if (_keepLaunchers isEqualTo -1) then
 	{
@@ -59,11 +59,11 @@ if not(alive _target) then
 	{
 		if (vehicle _killer isEqualTo _killer) then // No roadkills please
 		{
-			_respectReward = "respectReward" call VEMF_fnc_getSetting;
+			_respectReward = "respectReward" call VEMFr_fnc_getSetting;
 			if (_respectReward > 1) then
 			{
 				_message = [[]];
-				_killMsg = ["AI WACKED","AI CLIPPED","AI DISABLED","AI DISQUALIFIED","AI WIPED","AI WIPED","AI ERASED","AI LYNCHED","AI WRECKED","AI NEUTRALIZED","AI SNUFFED","AI WASTED","AI ZAPPED"] call VEMF_fnc_random;
+				_killMsg = ["AI WACKED","AI CLIPPED","AI DISABLED","AI DISQUALIFIED","AI WIPED","AI WIPED","AI ERASED","AI LYNCHED","AI WRECKED","AI NEUTRALIZED","AI SNUFFED","AI WASTED","AI ZAPPED"] call VEMFr_fnc_random;
 				(_message select 0) pushBack [_killMsg,_respectReward];
 				_dist = _target distance _killer;
 				switch true do
@@ -153,16 +153,23 @@ if not(alive _target) then
 				format["setAccountMoneyAndRespect:%1:%2:%3", _killer getVariable ["ExileMoney", 0], _newRespect, (getPlayerUID _killer)] call ExileServer_system_database_query_fireAndForget;
 			};
 
-			if (("sayKilled" call VEMF_fnc_getSetting) isEqualTo 1) then // Send kill message if enabled
+			_sayKilled = "sayKilled" call VEMFr_fnc_getSetting;
+			if (_sayKilled > 0) then // Send kill message if enabled
 			{
 				_dist = _target distance _killer;
 				if (_dist > -1) then
 				{
-					if (isPlayer _killer) then // Should prevent Error:NoUnit
+					_curWeapon = currentWeapon _killer;
+					if (_sayKilled isEqualTo 1) then
 					{
-						_curWeapon = currentWeapon _killer;
 						_kMsg = format["[VEMF] %1 *poofed* an AI from %2m with %3", name _killer, round _dist, getText(configFile >> "CfgWeapons" >> _curWeapon >> "DisplayName")];
-						_sent = [_kMsg, "sys"] call VEMF_fnc_broadCast;
+						_sent = [_kMsg, "sys"] call VEMFr_fnc_broadCast;
+					};
+					if (_sayKilled isEqualTo 2) then
+					{
+						VEMFrClientMsg = [format["[VEMF] You killed an AI from %1m with %2", round _dist, getText(configFile >> "CfgWeapons" >> _curWeapon >> "DisplayName")], "sys"];
+						(owner _killer) publicVariableClient "VEMFrClientMsg";
+						VEMFrClientMsg = nil;
 					};
 				};
 			};
@@ -170,7 +177,7 @@ if not(alive _target) then
 
 		if not (vehicle _killer isEqualTo _killer) then
 		{ // Send kill message if enabled
-			if (("sayKilled" call VEMF_fnc_getSetting) isEqualTo 1) then
+			if (("sayKilled" call VEMFr_fnc_getSetting) isEqualTo 1) then
 			{
 				_dist = _target distance _killer;
 				if (_dist < 5) then
@@ -178,7 +185,7 @@ if not(alive _target) then
 					if (isPlayer _killer) then // Should prevent Error:NoUnit
 					{
 						_kMsg = format["[VEMF] %1 road-killed an AI", name _killer];
-						_sent = [_kMsg, "sys"] call VEMF_fnc_broadCast;
+						_sent = [_kMsg, "sys"] call VEMFr_fnc_broadCast;
 					};
 				};
 			};

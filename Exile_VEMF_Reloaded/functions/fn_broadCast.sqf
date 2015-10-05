@@ -23,11 +23,8 @@ if not(_msg isEqualTo format[""]) then
 		{
 			if (isPlayer _x) then
 			{
-				if (side _x isEqualTo independent) then
-				{
-					VEMFChatMsg = [_msg, _mode];
-					(owner _x) publicVariableClient "VEMFChatMsg";
-				};
+				VEMFrClientMsg = [_msg, _mode];
+				(owner _x) publicVariableClient "VEMFrClientMsg";
 			};
 		} forEach playableUnits;
 		_sent = true;

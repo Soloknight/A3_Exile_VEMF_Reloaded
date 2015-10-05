@@ -4,7 +4,7 @@
 private ["_settings","_grpCount","_groupUnits","_playerCheck","_loc","_hasPlayers","_marker","_spawned","_grpArr","_unitArr","_done","_boxes","_box","_chute","_colors","_lightType","_light","_smoke"];
 
 // Define _settings
-_settings = [["DynamicLocationInvasion"],["maxInvasions","groupCount","groupUnits","distanceCheck","distanceTooClose","distanceMaxPrefered","playerCheck","crateAltitude","useMarker","parachuteCrate","crateVisualMarker","crateMapMarker","crateSpawnSound"]] call VEMF_fnc_getSetting;
+_settings = [["DynamicLocationInvasion"],["maxInvasions","groupCount","groupUnits","distanceCheck","distanceTooClose","distanceMaxPrefered","playerCheck","crateAltitude","useMarker","parachuteCrate","crateVisualMarker","crateMapMarker","crateSpawnSound"]] call VEMFr_fnc_getSetting;
 _maxInvasions = _settings select 0;
 if isNil"VEMF_invasCount" then { VEMF_invasCount = 0; };
 if (VEMF_invasCount < _maxInvasions) then
@@ -23,23 +23,27 @@ if (VEMF_invasCount < _maxInvasions) then
 	_crateSpawnSound = _settings select 12;
 
 	// Find A Town to Invade
-	_loc = ["loc", false, position (playableUnits select floor random count playableUnits), _range, _tooClose, _maxPref, _playerCheck] call VEMF_fnc_findPos;
+	_loc = ["loc", false, position (playableUnits select floor random count playableUnits), _range, _tooClose, _maxPref, _playerCheck] call VEMFr_fnc_findPos;
 	if (typeName _loc isEqualTo "ARRAY") then
 	{
 		_locName = _loc select 0;
 		if (_locName isEqualTo "") then { _locName = "Area"; };
-		["DynamicLocationInvasion", 1, format["Invading %1...", _locName]] call VEMF_fnc_log;
+		["DynamicLocationInvasion", 1, format["Invading %1...", _locName]] call VEMFr_fnc_log;
 		VEMF_invasCount = VEMF_invasCount + 1;
 		// Send message to all players
 		private ["_newMissionMsg"];
-		_aiPoliceMode = "aiPoliceMode" call VEMF_fnc_getSetting;
-		if (_aiPoliceMode isEqualTo 1) then
-		{
-			_newMissionMsg = [format["%1 Police forces are now controlling %2 @ %3", worldName, _locName, mapGridPosition (_loc select 1)], ""] call VEMF_fnc_broadCast;
-		};
+		_aiPoliceMode = "aiPoliceMode" call VEMFr_fnc_getSetting;
 		if (_aiPoliceMode isEqualTo -1) then
 		{
-			_newMissionMsg = [format["Plundering groups have invaded %1 @ %2", _locName, mapGridPosition (_loc select 1)], ""] call VEMF_fnc_broadCast;
+			_newMissionMsg = [format["Plundering groups have invaded %1 @ %2", _locName, mapGridPosition (_loc select 1)], ""] call VEMFr_fnc_broadCast;
+		};
+		if (_aiPoliceMode isEqualTo 1) then
+		{
+			_newMissionMsg = [format["%1 Police forces are now controlling %2 @ %3", worldName, _locName, mapGridPosition (_loc select 1)], ""] call VEMFr_fnc_broadCast;
+		};
+		if (_aiPoliceMode isEqualTo 2) then
+		{
+			_newMissionMsg = [format["%1 S.W.A.T. teams are now raiding %2 @ %3", worldName, _locName, mapGridPosition (_loc select 1)], ""] call VEMFr_fnc_broadCast;
 		};
 		if _newMissionMsg then
 		{
@@ -51,11 +55,11 @@ if (VEMF_invasCount < _maxInvasions) then
 				_marker setMarkerColor "ColorBlack";
 			};
 			// Usage: POSITION, Radius
-			_playerNear = [_loc select 1, 800] call VEMF_fnc_waitForPlayers;
+			_playerNear = [_loc select 1, 800] call VEMFr_fnc_waitForPlayers;
 			if _playerNear then
 			{
 				// Player is Near, so Spawn the Units
-				_spawned = [_loc select 1, _locName, ((_grpCount select 0) + round random ((_grpCount select 1) - (_grpCount select 0))), ((_groupUnits select 0) + round random ((_groupUnits select 1) - (_groupUnits select 0)))] call VEMF_fnc_spawnAI;
+				_spawned = [_loc select 1, _locName, ((_grpCount select 0) + round random ((_grpCount select 1) - (_grpCount select 0))), ((_groupUnits select 0) + round random ((_groupUnits select 1) - (_groupUnits select 0)))] call VEMFr_fnc_spawnAI;
 				if (count (_spawned select 0) > 0) then
 				{
 					private ["_cal50s"];
@@ -65,47 +69,51 @@ if (VEMF_invasCount < _maxInvasions) then
 					};
 					// Place mines if enabled
 					private ["_minesPlaced","_placeMines"];
-					_placeMines = [[["DynamicLocationInvasion"],["placeMines"]] call VEMF_fnc_getSetting, 0, [0]] call BIS_fnc_param;
+					_placeMines = [[["DynamicLocationInvasion"],["placeMines"]] call VEMFr_fnc_getSetting, 0, [0]] call BIS_fnc_param;
 					if (_placeMines isEqualTo 1) then
 					{
-						_minesPlaced = [[_loc select 1, 5, 100] call VEMF_fnc_placeMines, 0, [], [[]]] call BIS_fnc_param;
+						_minesPlaced = [[_loc select 1, 5, 100] call VEMFr_fnc_placeMines, 0, [], [[]]] call BIS_fnc_param;
 						if (count _minesPlaced > 0) then
 						{
-							["DynamicLocationInvasion", 1, format["Successfully placed mines at %1", _locName]] call VEMF_fnc_log;
+							["DynamicLocationInvasion", 1, format["Successfully placed mines at %1", _locName]] call VEMFr_fnc_log;
 						};
 						if (count _minesPlaced isEqualto 0) then
 						{
-							["DynamicLocationInvasion", 0, format["Failed to place mines at %1", _locName]] call VEMF_fnc_log;
+							["DynamicLocationInvasion", 0, format["Failed to place mines at %1", _locName]] call VEMFr_fnc_log;
 							_minesPlaced = nil;
 						};
 					};
 
 					// Wait for Mission Completion
-					_done = [_loc select 1, _spawned select 0, _playerCheck] call VEMF_fnc_waitForMissionDone;
-					_usedLocs = uiNamespace getVariable "vemfUsedLocs";
+					_done = [_loc select 1, _spawned select 0, _playerCheck] call VEMFr_fnc_waitForMissionDone;
+					_usedLocs = uiNamespace getVariable "VEMFrUsedLocs";
 					_index = _usedLocs find _loc;
 					_usedLocs deleteAt _index;
 					if _done then
 					{
 						// Broadcast
 						private ["_completeMsg"];
+						if (_aiPoliceMode isEqualTo -1) then
+						{
+							_completeMsg = [format["%1 @ %2 has been cleared of %3 bad guys", _locName, mapGridPosition (_loc select 1), worldName], ""] call VEMFr_fnc_broadCast;
+						};
 						if (_aiPoliceMode isEqualTo 1) then
 						{
-							_completeMsg = [format["%1 @ %2 has been cleared of %3 Police forces", _locName, mapGridPosition (_loc select 1), worldName], ""] call VEMF_fnc_broadCast;
+							_completeMsg = [format["%1 @ %2 has been cleared of %3 Police forces", _locName, mapGridPosition (_loc select 1), worldName], ""] call VEMFr_fnc_broadCast;
 						};
-						if not(_aiPoliceMode isEqualTo 1) then
+						if (_aiPoliceMode isEqualTo 2) then
 						{
-							_completeMsg = [format["%1 @ %2 has been cleared of %3 Militia", _locName, mapGridPosition (_loc select 1), worldName], ""] call VEMF_fnc_broadCast;
+							_completeMsg = [format["S.W.A.T. raid on %1 @ %2 has been eliminated", _locName, mapGridPosition (_loc select 1)], ""] call VEMFr_fnc_broadCast;
 						};
 						if _completeMsg then
 						{
 							// Deal with the 50s
 							if not isNil"_cal50s" then
 							{
-								_keep50s = ([["DynamicLocationInvasion"],["keep50s"]] call VEMF_fnc_getSetting) select 0;
+								_keep50s = ([["DynamicLocationInvasion"],["keep50s"]] call VEMFr_fnc_getSetting) select 0;
 								if (_keep50s isEqualTo -1) then
 								{
-									_cal50delMode = ([["DynamicLocationInvasion"],["cal50delMode"]] call VEMF_fnc_getSetting) select 0;
+									_cal50delMode = ([["DynamicLocationInvasion"],["cal50delMode"]] call VEMFr_fnc_getSetting) select 0;
 									{
 										if (_cal50delMode isEqualTo 1) then
 										{
@@ -119,7 +127,7 @@ if (VEMF_invasCount < _maxInvasions) then
 								};
 							};
 							// Choose a box
-							_boxes = [["DynamicLocationInvasion"],["crateTypes"]] call VEMF_fnc_getSetting;
+							_boxes = [["DynamicLocationInvasion"],["crateTypes"]] call VEMFr_fnc_getSetting;
 							_box = (_boxes select 0) call BIS_fnc_selectRandom;
 							_pos = [_loc select 1, 0, 100, 0, 0, 300, 0] call bis_fnc_findSafePos;
 							private ["_crate"];
@@ -135,9 +143,9 @@ if (VEMF_invasCount < _maxInvasions) then
 									_crate allowDamage false;
 									_crate enableSimulationGlobal true;
 									_crate attachTo [_chute, [0,0,0]];
-									["DynamicLocationInvasion", 1, format ["Crate parachuted at: %1 / Grid: %2", (getPosATL _crate), mapGridPosition (getPosATL _crate)]] call VEMF_fnc_log;
-									_lootLoaded = [_crate] call VEMF_fnc_loadLoot;
-									if _lootLoaded then { ["DynamicLocationInvasion", 1, "Loot loaded successfully into parachuting crate"] call VEMF_fnc_log };
+									["DynamicLocationInvasion", 1, format ["Crate parachuted at: %1 / Grid: %2", (getPosATL _crate), mapGridPosition (getPosATL _crate)]] call VEMFr_fnc_log;
+									_lootLoaded = [_crate] call VEMFr_fnc_loadLoot;
+									if _lootLoaded then { ["DynamicLocationInvasion", 1, "Loot loaded successfully into parachuting crate"] call VEMFr_fnc_log };
 								};
 							};
 							if (_useChute isEqualTo -1) then
@@ -148,15 +156,15 @@ if (VEMF_invasCount < _maxInvasions) then
 								{
 									playSound3D ["\A3\Sounds_F_Bootcamp\SFX\VR\Spawn.wss", _crate, false, position _crate, 1, 1, 250];
 								};
-								_lootLoaded = [_crate] call VEMF_fnc_loadLoot;
-								if _lootLoaded then { ["DynamicLocationInvasion", 1, "Loot loaded successfully into crate"] call VEMF_fnc_log };
+								_lootLoaded = [_crate] call VEMFr_fnc_loadLoot;
+								if _lootLoaded then { ["DynamicLocationInvasion", 1, "Loot loaded successfully into crate"] call VEMFr_fnc_log };
 							};
 							if (_crateVisualMarker isEqualTo 1) then
 							{
 								// If night, attach a chemlight
 								if (dayTime < 5 OR dayTime > 19) then
 								{
-									_colors = [[["DynamicLocationInvasion"],["flairTypes"]] call VEMF_fnc_getSetting, 0, [], [[]]] call BIS_fnc_param;
+									_colors = [[["DynamicLocationInvasion"],["flairTypes"]] call VEMFr_fnc_getSetting, 0, [], [[]]] call BIS_fnc_param;
 									if (count _colors > 0) then
 									{
 										_lightType = _colors select floor random count _colors;
@@ -167,7 +175,7 @@ if (VEMF_invasCount < _maxInvasions) then
 								// If day, attach smoke
 								if (dayTime > 5 OR dayTime < 19) then
 								{
-									_colors = [[["DynamicLocationInvasion"],["smokeTypes"]] call VEMF_fnc_getSetting, 0, [], [[]]] call BIS_fnc_param;
+									_colors = [[["DynamicLocationInvasion"],["smokeTypes"]] call VEMFr_fnc_getSetting, 0, [], [[]]] call BIS_fnc_param;
 									if (count _colors > 0) then
 									{
 										_rndmColor = _colors select floor random count _colors;
@@ -186,14 +194,14 @@ if (VEMF_invasCount < _maxInvasions) then
 								deleteMarker _marker
 							};
 							VEMF_invasCount = VEMF_invasCount - 1;
-							VEMF_missionCount = VEMF_missionCount - 1;
+							VEMFr_missionCount = VEMFr_missionCount - 1;
 
 							// Put a marker on the crate if enabled
 							if not isNull _crate then
 							{
-								if not ([getPos _crate, 2] call VEMF_fnc_checkPlayerPresence) then
+								if not ([getPos _crate, 2] call VEMFr_fnc_checkPlayerPresence) then
 								{
-									_addMarker = [[["DynamicLocationInvasion"],["crateMapMarker"]] call VEMF_fnc_getSetting, 0, 1, [0]] call BIS_fnc_param;
+									_addMarker = [[["DynamicLocationInvasion"],["crateMapMarker"]] call VEMFr_fnc_getSetting, 0, 1, [0]] call BIS_fnc_param;
 									if (_addMarker isEqualTo 1) then
 									{
 										private ["_crateMarker"];
@@ -206,7 +214,7 @@ if (VEMF_invasCount < _maxInvasions) then
 										{
 											_crate = _this select 0;
 											_crateMarker = _this select 1;
-											waitUntil { uiSleep 4; [getPos _crate, 2] call VEMF_fnc_checkPlayerPresence };
+											waitUntil { uiSleep 4; [getPos _crate, 2] call VEMFr_fnc_checkPlayerPresence };
 											deleteMarker _crateMarker;
 										};
 									};
@@ -217,7 +225,7 @@ if (VEMF_invasCount < _maxInvasions) then
 							if not isNil"_minesPlaced" then
 							{
 								private ["_cleanMines"];
-								_cleanMines = [[["DynamicLocationInvasion"],["cleanMines"]] call VEMF_fnc_getSetting, 0, 1, [0]] call BIS_fnc_param;
+								_cleanMines = [[["DynamicLocationInvasion"],["cleanMines"]] call VEMFr_fnc_getSetting, 0, 1, [0]] call BIS_fnc_param;
 								if (_cleanMines isEqualTo 2) then
 								{
 									{
@@ -227,7 +235,7 @@ if (VEMF_invasCount < _maxInvasions) then
 											uiSleep (2 + round random 2);
 										};
 									} forEach _minesPlaced;
-									["DynamicLocationInvasion", 1, format["Successfully exploded all %1 mines at %2", count _minesPlaced, _locName]] call VEMF_fnc_log;
+									["DynamicLocationInvasion", 1, format["Successfully exploded all %1 mines at %2", count _minesPlaced, _locName]] call VEMFr_fnc_log;
 									_minesPlaced = nil;
 								};
 								if (_cleanMines isEqualTo 1) then
@@ -238,43 +246,43 @@ if (VEMF_invasCount < _maxInvasions) then
 											deleteVehicle _x;
 										};
 									} forEach _minesPlaced;
-									["DynamicLocationInvasion", 1, format["Successfully deleted all %1 mines at %2", count _minesPlaced, _locName]] call VEMF_fnc_log;
+									["DynamicLocationInvasion", 1, format["Successfully deleted all %1 mines at %2", count _minesPlaced, _locName]] call VEMFr_fnc_log;
 									_minesPlaced = nil;
 								};
 							};
 						};
 						if not _completeMsg then
 						{
-							["DynamicLocationInvasion", 0, "Mission success broadcast returned false."] call VEMF_fnc_log;
+							["DynamicLocationInvasion", 0, "Mission success broadcast returned false."] call VEMFr_fnc_log;
 							if not isNil"_marker" then
 							{
 								deleteMarker _marker
 							};
 							VEMF_invasCount = VEMF_invasCount - 1;
-							VEMF_missionCount = VEMF_missionCount - 1;
+							VEMFr_missionCount = VEMFr_missionCount - 1;
 						};
 					};
 				};
 				if isNil"_spawned" then
 				{
-					["DynamicLocationInvasion", 0, format["Failed to spawn AI in %1", _locName]] call VEMF_fnc_log;
+					["DynamicLocationInvasion", 0, format["Failed to spawn AI in %1", _locName]] call VEMFr_fnc_log;
 					if not isNil"_marker" then
 					{
 						deleteMarker _marker
 					};
 					VEMF_invasCount = VEMF_invasCount - 1;
-					VEMF_missionCount = VEMF_missionCount - 1;
+					VEMFr_missionCount = VEMFr_missionCount - 1;
 				};
 			};
 			if not _playerNear then
 			{
-				["DynamicLocationInvasion", 1, format["Invasion of %1 timed out.", _locName]] call VEMF_fnc_log;
+				["DynamicLocationInvasion", 1, format["Invasion of %1 timed out.", _locName]] call VEMFr_fnc_log;
 				if not isNil"_marker" then
 				{
 					deleteMarker _marker
 				};
 				VEMF_invasCount = VEMF_invasCount - 1;
-				VEMF_missionCount = VEMF_missionCount - 1;
+				VEMFr_missionCount = VEMFr_missionCount - 1;
 			};
 		};
 	};

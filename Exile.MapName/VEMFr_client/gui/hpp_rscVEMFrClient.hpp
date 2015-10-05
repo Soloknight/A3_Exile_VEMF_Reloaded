@@ -25,7 +25,7 @@ class txtTag: RscText
 	deletable = 0;
 	fade = 0;
 	sizeEx = 0.05;
-	font = "OrbitronMedium";
+	font = "PuristaBold";
 	style = 2;
 	access = 0;
 	type = 0;
@@ -51,7 +51,7 @@ class txt: RscText
 	shadow = 0;
 	access = 0;
 	sizeEx = 0.035;
-	font = "OrbitronLight";
+	font = "PuristaMedium";
 	style = 0;
 	fade = 0;
 	type = 0;

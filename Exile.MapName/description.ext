@@ -1,18 +1,18 @@
 class cfgFunctions
 {
-	class VEMF
+	class Epoch_VEMF_Reloaded
 	{
-		tag = "VEMF";
-		class functions
+		tag = "VEMFr";
+		class clientFunctions
 		{
-			file = "VEMFclient";
-			class vemfClientMessage {};
-			class vemfClientInit { postInit = 1; };
+			file = "VEMFr_client\functions";
+			class clientMessage {};
+			class clientInit { postInit = 1; };
 		};
 	};
 };
 
 class RscTitles
 {
-	#include "VEMFclient\hpp_mainVemfClient.hpp"
+	#include "VEMFr_client\gui\hpp_mainVEMFrClient.hpp"
 };

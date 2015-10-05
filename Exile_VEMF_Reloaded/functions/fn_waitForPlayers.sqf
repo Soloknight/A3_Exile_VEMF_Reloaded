@@ -22,15 +22,15 @@ if (count _pos isEqualTo 3) then
 	{
 		_time = time;
 		// Define _settings
-		_timeOutTime = "timeOutTime" call VEMF_fnc_getSetting;
+		_timeOutTime = "timeOutTime" call VEMFr_fnc_getSetting;
 		// _pp = playerPresence
-		_pp = [_pos, _rad] call VEMF_fnc_checkPlayerPresence;
+		_pp = [_pos, _rad] call VEMFr_fnc_checkPlayerPresence;
 		if not _pp then
 		{
 			_stopLoop = false;
 			while {not _stopLoop} do
 			{
-				if ([_pos, _rad] call VEMF_fnc_checkPlayerPresence) then { _stopLoop = true; _playerNear = true };
+				if ([_pos, _rad] call VEMFr_fnc_checkPlayerPresence) then { _stopLoop = true; _playerNear = true };
 				if not _playerNear then
 				{
 					if not _stopLoop then

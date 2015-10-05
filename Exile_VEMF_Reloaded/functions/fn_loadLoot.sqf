@@ -32,7 +32,7 @@ if not isNull _crate then
 			"maxVestSlots","minVestSlots","maxHeadGearSlots","minHeadGearSlots","maxBagSlots","minBagSlots","primaryWeaponLoot","secondaryWeaponLoot","magazinesLoot","attachmentsLoot",
 			"itemsLoot","vestsLoot","backpacksLoot","headGearLoot","blackListLoot"
 		]
-	] call VEMF_fnc_getSetting;
+	] call VEMFr_fnc_getSetting;
 	_maxPrim = _settings select 0;
 	_minPrim = _settings select 1;
 	_maxSec = _settings select 2;

@@ -12,12 +12,8 @@
 	Do you like and appreciate my work? Please leave a like or a nice comment for me on the forums :)
 */
 
-class VEMFconfig
+class CfgVemfReloaded
 {
-	/////////////////////////////
-	VEMF_version = 1.0725.6; /// Do NOT change
-	/////////////////////////////
-	/////// Configure VEMF here ///////
 	// Global settings
 	allowHeadLessClient = -1; // HC support is currently broken // Set to 1 if you have (a) headless client(s) | -1 = DISABLED
 	minServerFPS = 20; // Missions will not spawn if server's FPS is below this number
@@ -25,19 +21,19 @@ class VEMFconfig
 	minPlayers = 1; // Missions will not start until player count reaches this number OR when player count goes below this amount
 	maxGlobalMissions = 5; // Use -1 to disable limit | Max amount of missions that are allowed to run at the same time
  	timeOutTime = 20; // In minutes. Use -1 to disable mission timeout; Minimal: 5
-	minNew = 1; // Minimum time before new mission can run
-	maxNew = 2; // Maximum time before new mission can run
+	minNew = 2; // Minimum time before new mission can run
+	maxNew = 3; // Maximum time before new mission can run
 	missionList[] = {"DynamicLocationInvasion"}; // Speaks for itself, right?
 	missionDistance = 3000; // Minimum distance between missions
 	addons[] = {}; // Not used for now
 	noMissionPos[] = {{{2998.62,18175.4,0.00143886},500},{{14601.3,16799.3,0.00143814},800},{{23334.8,24189.5,0.00132132},600}}; // Format: {{position},radius} | Default: Exile safezones
 	locationBlackList[] = {"Sagonisi","Monisi","Fournos","Savri","Atsalis","Polemista","Cap Makrinos","Pyrgi","Makrynisi","Chelonisi","Almyra","Surf Club"};
 	killPercentage = 100; // In percent. 100 means all AI that belong to mission need to be killed
-	sayKilled = 1; // Set to -1 if you do not want AI killed messages
+	sayKilled = 1; // Set to -1 if you do not want AI killed messages | 1 = everyone will see message | 2 = send message only to the killer
 	allowSmall = 1; // Set to -1 if you do not want missions to target very small unusual locations
 	keepLaunchers = 1; // Use -1 to remove AI's launcher on killed
 	keepAIbodies = 1; // Set to -1 if you want the AI's body to be deleted after they are killed
-	aiPoliceMode = 1; // Use -1 to give AI normal soldier clothing
+	aiPoliceMode = 1; // Use -1 to give AI normal soldier clothing | 1 = normal police | 2 = S.W.A.T.
 	respectReward = 20; // Default respect to give always | Use -1 to disable respect gain. Minimum: 1 (if you want it enabled) | VEMF will automatically give bonus
 
 	/////// Debugging/learning mode ///////
@@ -308,25 +304,28 @@ class VEMFconfig
 		};
 	};
 };
+
 class CfgPatches
 {
-	class Exile_VEMF
+	class Exile_VEMF_Reloaded
 	{
 		units[] = {"B_G_Soldier_AR_F"};
 		requiredAddons[] = {"exile_server"};
-		fileName = "Exile_VEMF.pbo";
+		fileName = "Exile_VEMF_Reloaded.pbo";
 		requiredVersion = 1.50;
-		author[]= {"Vampire","IT07"}; // Original author: Vampire. Permission to continue/remake VEMF given to IT07
+		version = 1.0727.3; /// Do NOT change
+		author[]= {"IT07"}; // Original author: Vampire. Permission to continue/remake VEMF given to IT07
 	};
 };
-class cfgFunctions
+
+class CfgFunctions
 {
-	class VEMF
+	class Exile_VEMF_Reloaded
 	{
-		tag = "VEMF";
-		class functions
+		tag = "VEMFr";
+		class serverFunctions
 		{
-			file = "Exile_VEMF\functions_VEMF";
+			file = "Exile_VEMF_Reloaded\functions";
 			class random {};
 			class log {};
 			class getSetting {};
@@ -346,7 +345,7 @@ class cfgFunctions
 			class waitForMissionDone {};
 			class checkLoot {};
 			class missionTimer {};
-			class launchVEMF { postInit = 1; };
+			class launch { postInit = 1; };
 			class REMOTEguard { postInit = 1; };
 		};
 	};
